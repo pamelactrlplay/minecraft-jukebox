@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Jukebox</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Fonte pixelada clássica do Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="jukebox-container">
+        <h1>MINECRAFT JUKEBOX</h1>
+        
+        <!-- Visor da Jukebox -->
+        <div class="screen">
+            <div class="disc-container">
+                <div class="disc" id="disc"></div>
+            </div>
+            <div class="track-info">
+                <span id="track-title">Selecione um disco</span>
+                <span id="track-author">Bloco de Música</span>
+            </div>
+        </div>
+
+        <!-- Barra de Progresso e Tempo -->
+        <div class="progress-container">
+            <input type="range" id="progress-bar" value="0" min="0" max="100" step="1">
+            <div class="time-info">
+                <span id="current-time">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+        </div>
+
+        <!-- Controles estilo Inventário -->
+        <div class="controls">
+            <button id="prev-btn" class="mc-btn">⏮</button>
+            <button id="play-btn" class="mc-btn">▶</button>
+            <button id="next-btn" class="mc-btn">⏭</button>
+        </div>
+
+        <!-- Controle de Volume -->
+        <div class="volume-container">
+            <span>🔊</span>
+            <input type="range" id="volume-bar" value="1" min="0" max="1" step="0.05">
+        </div>
+
+        <!-- Lista de Discos de Música (Music Discs) -->
+        <div class="playlist">
+            <h3>DISCOS DISPONÍVEIS</h3>
+            <ul id="playlist-ul">
+                <!-- Os itens serão injetados via JavaScript -->
+            </ul>
+        </div>
+
+        <!-- Painel de Cadastro (Admin) -->
+        <div class="admin-panel">
+            <h3>CADASTRAR NOVO DISCO</h3>
+            <form id="add-track-form">
+                <input type="text" id="new-title" placeholder="Nome da Música (ex: C418 - Pigstep)" required>
+                <input type="text" id="new-author" placeholder="Autor (ex: Lena Raine)" required>
+                <input type="text" id="new-src" placeholder="Link do Áudio (.mp3 ou .ogg)" required>
+                <button type="submit" class="mc-btn submit-btn">INSERIR DISCO</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Elemento de áudio HTML5 -->
+    <audio id="audio-player"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
