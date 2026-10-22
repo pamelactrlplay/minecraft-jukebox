@@ -42,13 +42,51 @@ const db = new sqlite3.Database('./jukebox.db', (err) => {
     }
 });
 
+// GET /api/tracks com suporte a Filtro, Paginação e Ordenação
 app.get('/api/tracks', (req, res) => {
-    db.all("SELECT * FROM tracks", [], (err, rows) => {
+    let { search, sortBy, order, page, limit } = req.query;
+
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const offset = (page - 1) * limit;
+
+    let query = "SELECT * FROM tracks";
+    let countQuery = "SELECT COUNT(*) as total FROM tracks";
+    let params = [];
+    let countParams = [];
+
+    if (search) {
+        query += " WHERE title LIKE ? OR author LIKE ?";
+        countQuery += " WHERE title LIKE ? OR author LIKE ?";
+        const searchTerm = `%${search}%`;
+        params.push(searchTerm, searchTerm);
+        countParams.push(searchTerm, searchTerm);
+    }
+
+    const allowedSortFields = ['title', 'author', 'id'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'id';
+    const sortOrder = order && order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+    query += ` ORDER BY ${sortField} ${sortOrder}`;
+
+    query += " LIMIT ? OFFSET ?";
+    params.push(limit, offset);
+
+    db.get(countQuery, countParams, (err, countRow) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
+
+        db.all(query, params, (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+
+            res.json({
+                total: countRow.total,
+                page: page,
+                limit: limit,
+                totalPages: Math.ceil(countRow.total / limit),
+                data: rows
+            });
+        });
     });
 });
-
 app.post('/api/tracks', (req, res) => {
     const { title, author, src } = req.body;
     db.run(`INSERT INTO tracks (title, author, src) VALUES (?, ?, ?)`, [title, author, src], function(err) {
